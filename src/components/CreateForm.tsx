@@ -25,10 +25,12 @@ import { elementsActions } from "../store/elements";
 import { stepperActions } from "../store/stepper";
 import FormatSizeIcon from "@mui/icons-material/FormatSize";
 
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.min.js",
-  import.meta.url
-).toString();
+// pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+//   "pdfjs-dist/build/pdf.worker.min.js",
+//   import.meta.url
+// ).toString();
+
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
 const CreateForm = () => {
   const dispatch = useDispatch();
@@ -76,8 +78,27 @@ const CreateForm = () => {
   };
 
   const handleClick = (type: ElementType, label: string) => {
-    // Header Text
+    // Text Input
     if (type === ElementType.TextInputElement) {
+      const newElement: IElement = {
+        id: createId(),
+        type,
+        label,
+        x: 0,
+        y: 0,
+        width: "160px",
+        height: "30px",
+        color: defaultColor,
+        size: defaultSize,
+        value: "",
+        alignment: defaultAlignment,
+      };
+
+      setElements([...elements, newElement]);
+    }
+
+    // Date Picker
+    if (type === ElementType.DatePickerElement) {
       const newElement: IElement = {
         id: createId(),
         type,
@@ -195,7 +216,10 @@ const CreateForm = () => {
           >
             {elements.map((el, i) => {
               // Header Text
-              if (el.type === ElementType.TextInputElement) {
+              if (
+                el.type === ElementType.TextInputElement ||
+                el.type === ElementType.DatePickerElement
+              ) {
                 return (
                   <Rnd
                     bounds="parent"
@@ -272,10 +296,22 @@ const CreateForm = () => {
             size="medium"
             sx={{ my: 1 }}
             onClick={() =>
-              handleClick(ElementType.TextInputElement, "Header Text")
+              handleClick(ElementType.TextInputElement, "Text Input")
             }
           >
-            Header Text
+            Text Input
+          </Button>
+
+          <Button
+            variant="outlined"
+            startIcon={<AddIcon />}
+            size="medium"
+            sx={{ my: 1 }}
+            onClick={() =>
+              handleClick(ElementType.DatePickerElement, "Date Picker")
+            }
+          >
+            Date Picker
           </Button>
 
           <Button
@@ -304,34 +340,41 @@ const CreateForm = () => {
         </DialogTitle>
 
         <DialogContent sx={{ display: "flex", flexDirection: "column" }}>
-          {/*Label*/}
-          {selectedElement?.type === ElementType.TextInputElement && (
-            <TextField
-              id="el-label"
-              label="Label"
-              variant="outlined"
-              value={selectedElement.label}
-              onChange={(e) => handleLabelChange(e)}
-              sx={{ m: 1 }}
-            />
-          )}
+          <Box
+            sx={{ display: "flex", justifyContent: "space-between", gap: 1 }}
+          >
+            {/*Label*/}
+            {(selectedElement?.type === ElementType.TextInputElement ||
+              selectedElement?.type === ElementType.DatePickerElement) && (
+              <TextField
+                id="el-label"
+                label="Label"
+                variant="outlined"
+                value={selectedElement.label}
+                onChange={(e) => handleLabelChange(e)}
+                sx={{ m: 1, width: "100%" }}
+              />
+            )}
 
-          {/*Color*/}
-          {selectedElement?.type === ElementType.TextInputElement && (
-            <TextField
-              id="text-color"
-              size="medium"
-              type="color"
-              label="Color"
-              variant="outlined"
-              value={selectedElement.color}
-              onChange={(e) => handleTextColorChange(e)}
-              sx={{ m: 1 }}
-            />
-          )}
+            {/*Color*/}
+            {(selectedElement?.type === ElementType.TextInputElement ||
+              selectedElement?.type === ElementType.DatePickerElement) && (
+              <TextField
+                id="text-color"
+                size="medium"
+                type="color"
+                label="Color"
+                variant="outlined"
+                value={selectedElement.color}
+                onChange={(e) => handleTextColorChange(e)}
+                sx={{ m: 1, width: "100%" }}
+              />
+            )}
+          </Box>
 
           {/*Font Size*/}
-          {selectedElement?.type === ElementType.TextInputElement && (
+          {(selectedElement?.type === ElementType.TextInputElement ||
+            selectedElement?.type === ElementType.DatePickerElement) && (
             <Box sx={{ m: 1 }}>
               <Typography id="input-slider" gutterBottom>
                 Font Size

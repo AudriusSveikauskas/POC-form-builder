@@ -7,11 +7,15 @@ import { Document, Page } from "react-pdf";
 import { PDFDocumentProxy } from "pdfjs-dist";
 import { elementsActions } from "../store/elements";
 import { stepperActions } from "../store/stepper";
+import DatePicker from "react-datepicker";
+
+import "react-datepicker/dist/react-datepicker.css";
 
 const FillForm = () => {
   const dispatch = useDispatch();
 
   const [numPages, setNumPages] = useState<number>();
+  const [startDate, setStartDate] = useState(new Date());
   const [selectedElement, setSelectedElement] = useState<IElement | undefined>(
     undefined
   );
@@ -43,6 +47,17 @@ const FillForm = () => {
 
     if (selectedElement !== undefined) {
       setSelectedElement({ ...selectedElement, value: newValue });
+    }
+  };
+
+  const handleDatePickerChange = (date: Date | null) => {
+    console.log("date", date);
+    if (date !== null && selectedElement !== undefined) {
+      setStartDate(date);
+      setSelectedElement({
+        ...selectedElement,
+        value: date.toLocaleDateString("lt-LT"),
+      });
     }
   };
 
@@ -85,8 +100,29 @@ const FillForm = () => {
                       label={el.label}
                       variant="filled"
                       value={el.value}
-                      onClick={() => setSelectedElement(el)}
+                      onMouseOver={() => setSelectedElement(el)}
                       onChange={(e) => handleInputChange(e)}
+                    />
+                  </Box>
+                );
+              }
+
+              if (el.type === ElementType.DatePickerElement) {
+                return (
+                  <Box sx={{ position: "absolute", top: el.y, left: el.x }}>
+                    {/*<TextField*/}
+                    {/*  id={`el-${i + 1}`}*/}
+                    {/*  size="small"*/}
+                    {/*  label={el.label}*/}
+                    {/*  variant="filled"*/}
+                    {/*  value={el.value}*/}
+                    {/*  onMouseOver={() => setSelectedElement(el)}*/}
+                    {/*  onChange={(e) => handleInputChange(e)}*/}
+                    {/*/>*/}
+                    <DatePicker
+                      selected={startDate}
+                      onInputClick={() => setSelectedElement(el)}
+                      onChange={(date) => handleDatePickerChange(date)}
                     />
                   </Box>
                 );

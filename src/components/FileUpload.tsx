@@ -26,8 +26,13 @@ const FileUpload = () => {
 
   return (
     <>
-      <label htmlFor="file">Load from file:</label>{" "}
-      <input onChange={onFileChange} type="file" />
+      <label htmlFor="file">Load from file:</label>
+      <input
+        id="file"
+        onChange={onFileChange}
+        type="file"
+        accept="application/pdf"
+      />
     </>
   );
 };

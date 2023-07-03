@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import { Document, Page } from "react-pdf";
 import { PDFDocumentProxy } from "pdfjs-dist";
+import hexRgb from "hex-rgb";
 
 const FlattenForm = () => {
   const [pdfBytesX, setPdfBytesX] = useState<Uint8Array>();
@@ -15,12 +16,15 @@ const FlattenForm = () => {
     (state) => state.elements.elements
   );
 
+  const handleHexRgb = (hex: string) => {
+    const rgbObj = hexRgb(hex);
+
+    return rgb(rgbObj.red / 255, rgbObj.green / 255, rgbObj.blue / 255);
+  };
+
   const file = useSelector<RootState, File | null>((state) => state.file.file);
 
   const modifyPdf = async () => {
-    // const url = "https://pdf-lib.js.org/assets/with_update_sections.pdf";
-    // const existingPdfBytes = await fetch(url).then((res) => res.arrayBuffer());
-
     if (file !== undefined && file !== null) {
       const pdfDoc = await PDFDocument.load(await file?.arrayBuffer());
 
@@ -36,7 +40,8 @@ const FlattenForm = () => {
           y: height - el.y,
           size: el.size,
           font: helveticaFont,
-          color: rgb(0.95, 0.1, 0.1),
+          // color: rgb(0.95, 0.1, 0.1),
+          color: el.color !== undefined ? handleHexRgb(el.color) : rgb(0, 0, 0),
           rotate: degrees(0),
         });
       });
@@ -69,6 +74,10 @@ const FlattenForm = () => {
       modifyPdf();
     }
   }, [file]);
+
+  useEffect(() => {
+    console.log("[][][", elements);
+  }, []);
 
   return (
     <Box sx={{ m: 3, display: "flex", justifyContent: "center" }}>
