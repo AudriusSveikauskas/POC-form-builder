@@ -32,6 +32,7 @@ const MainLayout = () => {
 
         {step === 0 && <FileUpload />}
         {step === 1 && <CreateForm />}
+        {step === 2 && <FillForm />}
       </Paper>
     </Box>
   );
