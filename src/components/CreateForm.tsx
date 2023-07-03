@@ -4,23 +4,26 @@ import type { PDFDocumentProxy } from "pdfjs-dist";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import {
-  Autocomplete,
   Box,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  Grid,
   IconButton,
+  Input,
+  Slider,
   TextField,
   Typography,
 } from "@mui/material";
 import { DraggableData, Rnd } from "react-rnd";
-import { ElementType, HeaderTextVariant } from "../enums";
+import { ElementType } from "../enums";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import AddIcon from "@mui/icons-material/Add";
 import { elementsActions } from "../store/elements";
 import { stepperActions } from "../store/stepper";
+import FormatSizeIcon from "@mui/icons-material/FormatSize";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.js",
@@ -36,6 +39,7 @@ const CreateForm = () => {
 
   const [elements, setElements] = useState<IElement[]>([]);
   const [idNumber, setIdNumber] = useState(1);
+
   const [selectedElement, setSelectedElement] = useState<IElement | undefined>(
     undefined
   );
@@ -50,26 +54,13 @@ const CreateForm = () => {
     dispatch(stepperActions.setStep(step));
   };
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
   const handleClose = () => {
     setOpen(false);
   };
 
   const defaultColor = "#000000";
-  const defaultVariant = HeaderTextVariant.F16;
   const defaultAlignment = "left";
-  const defaultSize = "16px";
-  const variantOptions = [
-    HeaderTextVariant.F08,
-    HeaderTextVariant.F10,
-    HeaderTextVariant.F12,
-    HeaderTextVariant.F14,
-    HeaderTextVariant.F16,
-    HeaderTextVariant.F18,
-  ];
+  const defaultSize = 12;
 
   const onDocumentLoadSuccess = ({
     numPages: nextNumPages,
@@ -81,7 +72,6 @@ const CreateForm = () => {
     const newElementId = `el-${idNumber}`;
     setIdNumber(idNumber + 1);
 
-    console.log("newElementId", newElementId);
     return newElementId;
   };
 
@@ -97,7 +87,7 @@ const CreateForm = () => {
         width: "160px",
         height: "30px",
         color: defaultColor,
-        variant: defaultVariant,
+        size: defaultSize,
         value: "",
         alignment: defaultAlignment,
       };
@@ -145,11 +135,31 @@ const CreateForm = () => {
     }
   };
 
-  const handleVariantChange = (variant: string | null) => {
-    const newVariant = variant;
+  const handleSliderChange = (event: Event, newValue: number | number[]) => {
+    const newFontSize = newValue;
 
-    if (selectedElement !== undefined && newVariant !== null) {
-      setSelectedElement({ ...selectedElement, variant: newVariant });
+    if (selectedElement !== undefined && typeof newFontSize === "number") {
+      setSelectedElement({ ...selectedElement, size: newFontSize });
+    }
+  };
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newFontSize =
+      event.target.value === "" ? "" : Number(event.target.value);
+
+    if (selectedElement !== undefined && typeof newFontSize === "number") {
+      setSelectedElement({ ...selectedElement, size: newFontSize });
+    }
+  };
+
+  const handleBlur = () => {
+    if (selectedElement?.size !== undefined && selectedElement?.size < 2) {
+      setSelectedElement({ ...selectedElement, size: 2 });
+    } else if (
+      selectedElement?.size !== undefined &&
+      selectedElement?.size > 40
+    ) {
+      setSelectedElement({ ...selectedElement, size: 40 });
     }
   };
 
@@ -293,8 +303,9 @@ const CreateForm = () => {
           </Typography>
         </DialogTitle>
 
-        {selectedElement?.type === ElementType.TextInputElement && (
-          <DialogContent sx={{ display: "flex", flexDirection: "column" }}>
+        <DialogContent sx={{ display: "flex", flexDirection: "column" }}>
+          {/*Label*/}
+          {selectedElement?.type === ElementType.TextInputElement && (
             <TextField
               id="el-label"
               label="Label"
@@ -303,8 +314,13 @@ const CreateForm = () => {
               onChange={(e) => handleLabelChange(e)}
               sx={{ m: 1 }}
             />
+          )}
+
+          {/*Color*/}
+          {selectedElement?.type === ElementType.TextInputElement && (
             <TextField
               id="text-color"
+              size="medium"
               type="color"
               label="Color"
               variant="outlined"
@@ -312,19 +328,47 @@ const CreateForm = () => {
               onChange={(e) => handleTextColorChange(e)}
               sx={{ m: 1 }}
             />
-            <Autocomplete
-              value={selectedElement.variant}
-              onChange={(event: any, newValue: string | null) => {
-                handleVariantChange(newValue);
-              }}
-              renderInput={(params) => (
-                <TextField {...params} label="Controllable" />
-              )}
-              options={variantOptions}
-              sx={{ m: 1 }}
-            />
-          </DialogContent>
-        )}
+          )}
+
+          {/*Font Size*/}
+          {selectedElement?.type === ElementType.TextInputElement && (
+            <Box sx={{ m: 1 }}>
+              <Typography id="input-slider" gutterBottom>
+                Font Size
+              </Typography>
+              <Grid container spacing={2} alignItems="center">
+                <Grid item>
+                  <FormatSizeIcon />
+                </Grid>
+                <Grid item xs>
+                  <Slider
+                    value={selectedElement.size}
+                    onChange={handleSliderChange}
+                    aria-labelledby="input-slider"
+                    max={40}
+                    min={2}
+                    step={1}
+                  />
+                </Grid>
+                <Grid item>
+                  <Input
+                    value={selectedElement.size}
+                    size="small"
+                    onChange={handleInputChange}
+                    onBlur={handleBlur}
+                    inputProps={{
+                      step: 1,
+                      min: 2,
+                      max: 40,
+                      type: "number",
+                      "aria-labelledby": "input-slider",
+                    }}
+                  />
+                </Grid>
+              </Grid>
+            </Box>
+          )}
+        </DialogContent>
 
         <DialogActions>
           <Button onClick={handleClose}>Close</Button>

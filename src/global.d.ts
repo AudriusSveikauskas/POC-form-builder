@@ -9,10 +9,11 @@ declare global {
     y: number;
     width: string;
     height: string;
-    color: string;
-    variant?: string;
-    value?: string;
+    color?: string;
+    size?: number;
+    value: string;
     alignment?: string;
+    rotate?: number;
   }
 }
 

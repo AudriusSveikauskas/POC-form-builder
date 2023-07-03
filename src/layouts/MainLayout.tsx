@@ -6,6 +6,7 @@ import { RootState } from "../store/store";
 import FileUpload from "../components/FileUpload";
 import CreateForm from "../components/CreateForm";
 import FillForm from "../components/FillForm";
+import FlattenForm from "../components/FlattenForm";
 
 const MainLayout = () => {
   const step = useSelector<RootState, number>((state) => state.stepper.step);
@@ -33,6 +34,7 @@ const MainLayout = () => {
         {step === 0 && <FileUpload />}
         {step === 1 && <CreateForm />}
         {step === 2 && <FillForm />}
+        {step === 3 && <FlattenForm />}
       </Paper>
     </Box>
   );

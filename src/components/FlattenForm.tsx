@@ -1,0 +1,94 @@
+import React, { useEffect, useState } from "react";
+import { Box } from "@mui/material";
+import { degrees, PDFDocument, rgb, StandardFonts } from "pdf-lib";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
+import { Document, Page } from "react-pdf";
+import { PDFDocumentProxy } from "pdfjs-dist";
+
+const FlattenForm = () => {
+  const [pdfBytesX, setPdfBytesX] = useState<Uint8Array>();
+  const [newFile, setNewFile] = useState<File>();
+  const [numPages, setNumPages] = useState<number>();
+
+  const elements = useSelector<RootState, IElement[]>(
+    (state) => state.elements.elements
+  );
+
+  const file = useSelector<RootState, File | null>((state) => state.file.file);
+
+  const modifyPdf = async () => {
+    // const url = "https://pdf-lib.js.org/assets/with_update_sections.pdf";
+    // const existingPdfBytes = await fetch(url).then((res) => res.arrayBuffer());
+
+    if (file !== undefined && file !== null) {
+      const pdfDoc = await PDFDocument.load(await file?.arrayBuffer());
+
+      const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+
+      const pages = pdfDoc.getPages();
+      const firstPage = pages[0];
+      const { width, height } = firstPage.getSize();
+
+      elements.forEach((el) => {
+        firstPage.drawText(el.value, {
+          x: el.x,
+          y: height - el.y,
+          size: el.size,
+          font: helveticaFont,
+          color: rgb(0.95, 0.1, 0.1),
+          rotate: degrees(0),
+        });
+      });
+
+      const pdfBytes = await pdfDoc.save();
+
+      setPdfBytesX(pdfBytes);
+    }
+  };
+
+  const getMockData = () => {
+    if (pdfBytesX !== undefined && pdfBytesX !== null) {
+      const blob = new File([pdfBytesX], "dsdsd");
+      setNewFile(blob);
+    }
+  };
+
+  const onDocumentLoadSuccess = ({
+    numPages: nextNumPages,
+  }: PDFDocumentProxy) => {
+    setNumPages(nextNumPages);
+  };
+
+  useEffect(() => {
+    getMockData();
+  }, [pdfBytesX]);
+
+  useEffect(() => {
+    if (file !== undefined && file !== null) {
+      modifyPdf();
+    }
+  }, [file]);
+
+  return (
+    <Box sx={{ m: 3, display: "flex", justifyContent: "center" }}>
+      <Box sx={{ position: "relative" }}>
+        {newFile !== undefined && (
+          <Document file={newFile} onLoadSuccess={() => onDocumentLoadSuccess}>
+            {Array.from(new Array(numPages), (el, index) => (
+              <Page
+                width={600}
+                key={`page_${index + 1}`}
+                pageNumber={index + 1}
+                renderTextLayer={false}
+                renderAnnotationLayer={false}
+              />
+            ))}
+          </Document>
+        )}
+      </Box>
+    </Box>
+  );
+};
+
+export default FlattenForm;
