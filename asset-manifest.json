@@ -1,11 +1,10 @@
 {
   "files": {
-    "main.js": "/POC-form-builder/static/js/main.c726a1d6.js",
-    "static/media/pdf.worker.min.js": "/POC-form-builder/static/media/pdf.worker.min.07d70a1b9afd286e16ba.js",
+    "main.js": "/POC-form-builder/static/js/main.3ad8bb1c.js",
     "index.html": "/POC-form-builder/index.html",
-    "main.c726a1d6.js.map": "/POC-form-builder/static/js/main.c726a1d6.js.map"
+    "main.3ad8bb1c.js.map": "/POC-form-builder/static/js/main.3ad8bb1c.js.map"
   },
   "entrypoints": [
-    "static/js/main.c726a1d6.js"
+    "static/js/main.3ad8bb1c.js"
   ]
 }
