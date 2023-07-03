@@ -1,0 +1,11 @@
+{
+  "files": {
+    "main.js": "/POC-form-builder/static/js/main.b929876e.js",
+    "static/media/pdf.worker.min.js": "/POC-form-builder/static/media/pdf.worker.min.07d70a1b9afd286e16ba.js",
+    "index.html": "/POC-form-builder/index.html",
+    "main.b929876e.js.map": "/POC-form-builder/static/js/main.b929876e.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.b929876e.js"
+  ]
+}
