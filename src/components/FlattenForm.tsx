@@ -40,7 +40,6 @@ const FlattenForm = () => {
           y: height - el.y,
           size: el.size,
           font: helveticaFont,
-          // color: rgb(0.95, 0.1, 0.1),
           color: el.color !== undefined ? handleHexRgb(el.color) : rgb(0, 0, 0),
           rotate: degrees(0),
         });
@@ -74,10 +73,6 @@ const FlattenForm = () => {
       modifyPdf();
     }
   }, [file]);
-
-  useEffect(() => {
-    console.log("[][][", elements);
-  }, []);
 
   return (
     <Box sx={{ m: 3, display: "flex", justifyContent: "center" }}>

@@ -78,43 +78,21 @@ const CreateForm = () => {
   };
 
   const handleClick = (type: ElementType, label: string) => {
-    // Text Input
-    if (type === ElementType.TextInputElement) {
-      const newElement: IElement = {
-        id: createId(),
-        type,
-        label,
-        x: 0,
-        y: 0,
-        width: "160px",
-        height: "30px",
-        color: defaultColor,
-        size: defaultSize,
-        value: "",
-        alignment: defaultAlignment,
-      };
+    const newElement: IElement = {
+      id: createId(),
+      type,
+      label,
+      x: 0,
+      y: 0,
+      width: "160px",
+      height: "30px",
+      color: defaultColor,
+      size: defaultSize,
+      value: "",
+      alignment: defaultAlignment,
+    };
 
-      setElements([...elements, newElement]);
-    }
-
-    // Date Picker
-    if (type === ElementType.DatePickerElement) {
-      const newElement: IElement = {
-        id: createId(),
-        type,
-        label,
-        x: 0,
-        y: 0,
-        width: "160px",
-        height: "30px",
-        color: defaultColor,
-        size: defaultSize,
-        value: "",
-        alignment: defaultAlignment,
-      };
-
-      setElements([...elements, newElement]);
-    }
+    setElements([...elements, newElement]);
   };
 
   const handleDragStop = (id: string, d: DraggableData) => {
@@ -218,7 +196,8 @@ const CreateForm = () => {
               // Header Text
               if (
                 el.type === ElementType.TextInputElement ||
-                el.type === ElementType.DatePickerElement
+                el.type === ElementType.DatePickerElement ||
+                el.type === ElementType.DropdownElement
               ) {
                 return (
                   <Rnd
@@ -294,7 +273,7 @@ const CreateForm = () => {
             variant="outlined"
             startIcon={<AddIcon />}
             size="medium"
-            sx={{ my: 1 }}
+            sx={{ my: 0.5 }}
             onClick={() =>
               handleClick(ElementType.TextInputElement, "Text Input")
             }
@@ -306,12 +285,22 @@ const CreateForm = () => {
             variant="outlined"
             startIcon={<AddIcon />}
             size="medium"
-            sx={{ my: 1 }}
+            sx={{ my: 0.5 }}
             onClick={() =>
               handleClick(ElementType.DatePickerElement, "Date Picker")
             }
           >
             Date Picker
+          </Button>
+
+          <Button
+            variant="outlined"
+            startIcon={<AddIcon />}
+            size="medium"
+            sx={{ my: 0.5 }}
+            onClick={() => handleClick(ElementType.DropdownElement, "Dropdown")}
+          >
+            Dropdown
           </Button>
 
           <Button
@@ -345,7 +334,8 @@ const CreateForm = () => {
           >
             {/*Label*/}
             {(selectedElement?.type === ElementType.TextInputElement ||
-              selectedElement?.type === ElementType.DatePickerElement) && (
+              selectedElement?.type === ElementType.DatePickerElement ||
+              selectedElement?.type === ElementType.DropdownElement) && (
               <TextField
                 id="el-label"
                 label="Label"
@@ -358,7 +348,8 @@ const CreateForm = () => {
 
             {/*Color*/}
             {(selectedElement?.type === ElementType.TextInputElement ||
-              selectedElement?.type === ElementType.DatePickerElement) && (
+              selectedElement?.type === ElementType.DatePickerElement ||
+              selectedElement?.type === ElementType.DropdownElement) && (
               <TextField
                 id="text-color"
                 size="medium"
@@ -374,7 +365,8 @@ const CreateForm = () => {
 
           {/*Font Size*/}
           {(selectedElement?.type === ElementType.TextInputElement ||
-            selectedElement?.type === ElementType.DatePickerElement) && (
+            selectedElement?.type === ElementType.DatePickerElement ||
+            selectedElement?.type === ElementType.DropdownElement) && (
             <Box sx={{ m: 1 }}>
               <Typography id="input-slider" gutterBottom>
                 Font Size
