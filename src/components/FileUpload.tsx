@@ -2,6 +2,7 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { stepperActions } from "../store/stepper";
 import { fileActions } from "../store/file";
+import { Box } from "@mui/material";
 
 const FileUpload = () => {
   const dispatch = useDispatch();
@@ -25,15 +26,27 @@ const FileUpload = () => {
   };
 
   return (
-    <>
-      <label htmlFor="file">Load from file:</label>
-      <input
-        id="file"
-        onChange={onFileChange}
-        type="file"
-        accept="application/pdf"
-      />
-    </>
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "column",
+        gap: 3,
+        my: 12,
+        cursor: "pointer",
+      }}
+    >
+      <Box>
+        <label htmlFor="file">Select the PDF form: </label>
+        <input
+          id="file"
+          onChange={onFileChange}
+          type="file"
+          accept="application/pdf"
+        />
+      </Box>
+    </Box>
   );
 };
 

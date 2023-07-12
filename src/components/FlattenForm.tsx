@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box } from "@mui/material";
+import { Box, Button, Link } from "@mui/material";
 import { degrees, PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
@@ -40,7 +40,6 @@ const FlattenForm = () => {
           y: height - el.y,
           size: el.size,
           font: helveticaFont,
-          // color: rgb(0.95, 0.1, 0.1),
           color: el.color !== undefined ? handleHexRgb(el.color) : rgb(0, 0, 0),
           rotate: degrees(0),
         });
@@ -75,28 +74,50 @@ const FlattenForm = () => {
     }
   }, [file]);
 
-  useEffect(() => {
-    console.log("[][][", elements);
-  }, []);
+  const handleDownloadClick = () => {
+    if (newFile !== undefined) {
+      const url = URL.createObjectURL(newFile);
+      console.log(url);
+
+      return url;
+    }
+  };
 
   return (
-    <Box sx={{ m: 3, display: "flex", justifyContent: "center" }}>
-      <Box sx={{ position: "relative" }}>
-        {newFile !== undefined && (
-          <Document file={newFile} onLoadSuccess={() => onDocumentLoadSuccess}>
-            {Array.from(new Array(numPages), (el, index) => (
-              <Page
-                width={600}
-                key={`page_${index + 1}`}
-                pageNumber={index + 1}
-                renderTextLayer={false}
-                renderAnnotationLayer={false}
-              />
-            ))}
-          </Document>
-        )}
+    <>
+      <Box sx={{ m: 3, display: "flex", justifyContent: "center" }}>
+        <Box sx={{ position: "relative" }}>
+          {newFile !== undefined && (
+            <Document
+              file={newFile}
+              onLoadSuccess={() => onDocumentLoadSuccess}
+            >
+              {Array.from(new Array(numPages), (el, index) => (
+                <Page
+                  width={600}
+                  key={`page_${index + 1}`}
+                  pageNumber={index + 1}
+                  renderTextLayer={false}
+                  renderAnnotationLayer={false}
+                />
+              ))}
+            </Document>
+          )}
+        </Box>
       </Box>
-    </Box>
+
+      <Box sx={{ m: 3, display: "flex", justifyContent: "center" }}>
+        <Button
+          variant="contained"
+          size="large"
+          sx={{ width: "60%" }}
+          href={`${handleDownloadClick()}`}
+          download="filled-form.pdf"
+        >
+          Download Document
+        </Button>
+      </Box>
+    </>
   );
 };
 

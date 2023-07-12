@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, TextField } from "@mui/material";
+import { Autocomplete, Box, Button, TextField } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import { ElementType } from "../enums";
@@ -50,8 +50,15 @@ const FillForm = () => {
     }
   };
 
+  const handleDropdownChange = (name: string | null) => {
+    if (name !== null) {
+      if (selectedElement !== undefined) {
+        setSelectedElement({ ...selectedElement, value: name });
+      }
+    }
+  };
+
   const handleDatePickerChange = (date: Date | null) => {
-    console.log("date", date);
     if (date !== null && selectedElement !== undefined) {
       setStartDate(date);
       setSelectedElement({
@@ -74,6 +81,13 @@ const FillForm = () => {
     setElements(elements);
     setStep(3);
   };
+
+  const empl = [
+    "Vardenis Pavardenis",
+    "Jonas Jonaitis",
+    "Antanas Antanaitis",
+    "Petras Petraitis",
+  ];
 
   return (
     <>
@@ -110,19 +124,44 @@ const FillForm = () => {
               if (el.type === ElementType.DatePickerElement) {
                 return (
                   <Box sx={{ position: "absolute", top: el.y, left: el.x }}>
-                    {/*<TextField*/}
-                    {/*  id={`el-${i + 1}`}*/}
-                    {/*  size="small"*/}
-                    {/*  label={el.label}*/}
-                    {/*  variant="filled"*/}
-                    {/*  value={el.value}*/}
-                    {/*  onMouseOver={() => setSelectedElement(el)}*/}
-                    {/*  onChange={(e) => handleInputChange(e)}*/}
-                    {/*/>*/}
                     <DatePicker
                       selected={startDate}
                       onInputClick={() => setSelectedElement(el)}
                       onChange={(date) => handleDatePickerChange(date)}
+                    />
+                  </Box>
+                );
+              }
+
+              if (el.type === ElementType.DropdownElement) {
+                return (
+                  <Box
+                    sx={{
+                      width: "200px",
+                      position: "absolute",
+                      top: el.y,
+                      left: el.x,
+                    }}
+                  >
+                    <Autocomplete
+                      fullWidth
+                      id="size-small-standard"
+                      size="small"
+                      options={empl}
+                      getOptionLabel={(option) => option}
+                      value={el.value}
+                      onChange={(event: any, newValue: string | null) => {
+                        handleDropdownChange(newValue);
+                      }}
+                      onMouseOver={() => setSelectedElement(el)}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          variant="standard"
+                          label="Employees"
+                          placeholder="Employees"
+                        />
+                      )}
                     />
                   </Box>
                 );
